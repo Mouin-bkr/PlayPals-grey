@@ -1,0 +1,16 @@
+[
+    {
+      "id": "game-1",
+      "title": "Game 1",
+      "description": "This is the first game.",
+      "image": "/images/game1.jpg",
+      "downloadLink": "/download/game1"
+    },
+    {
+      "id": "game-2",
+      "title": "Game 2",
+      "description": "This is the second game.",
+      "image": "/images/game2.jpg",
+      "downloadLink": "/download/game2"
+    }
+  ]
