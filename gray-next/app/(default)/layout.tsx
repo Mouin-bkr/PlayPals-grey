@@ -2,6 +2,7 @@
 
 import Header from "@/components/ui/header";
 import Footer from "@/components/ui/footer";
+import Navbar from "@/components/navbar/Navbar";
 
 export default function DefaultLayout({
   children,
@@ -10,8 +11,7 @@ export default function DefaultLayout({
 }) {
   return (
     <>
-      <Header />
-
+      <Navbar />
       <main className="grow">{children}</main>
 
       <Footer />

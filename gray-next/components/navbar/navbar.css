@@ -1,0 +1,72 @@
+/* Navbar.css */
+
+nav {
+  width: 100vw;
+  height: 5rem;
+  display: grid;
+  place-items: center;
+  background: #2b2b2b; /* Dark grey background */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9;
+  box-shadow: 0 1rem 1.5rem rgba(43, 43, 43, 0.2);
+  transition: background 0.3s ease;
+}
+
+.nav__container {
+  width: 90%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Logo styling and spacing */
+.nav__logo {
+  width: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 2rem;
+}
+
+/* Navigation Menu */
+.nav__menu {
+  display: flex;
+  gap: 2rem;
+  flex: 1;
+  justify-content: center; /* This centers the links */
+}
+
+.nav__menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+/* Right-side buttons */
+.nav__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav__actions .btn {
+  background: transparent;
+  border: 1px solid white;
+  padding: 0.5rem 1rem;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  transition: background 0.3s ease;
+}
+
+.nav__actions .btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Hide navigation menu on smaller screens if needed */
+@media screen and (max-width: 1024px) {
+  .nav__menu {
+    display: none;
+  }
+}
