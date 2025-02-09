@@ -1,16 +1,44 @@
 [
-    {
-      "id": "game-1",
-      "title": "Game 1",
-      "description": "This is the first game.",
-      "image": "/images/game1.jpg",
-      "downloadLink": "/download/game1"
+  {
+    "id": "1",
+    "title": "Super Platformer",
+    "type": "game",
+    "thumbnail": "/images/super-platformer-thumb.jpg",
+    "media": [
+      {
+        "type": "image",
+        "url": "/images/super-platformer-1.jpg"
+      },
+      {
+        "type": "image",
+        "url": "/images/super-platformer-2.jpg"
+      },
+      {
+        "type": "video",
+        "url": "/videos/super-platformer-gameplay.mp4"
+      }
+    ],
+    "description": "An exciting platformer game with challenging levels and vibrant graphics.",
+    "technicalDetails": {
+      "stack": ["Unity", "C#", "Blender", "Photoshop"],
+      "features": [
+        "Procedurally generated levels",
+        "Dynamic difficulty adjustment",
+        "Online leaderboards"
+      ]
     },
-    {
-      "id": "game-2",
-      "title": "Game 2",
-      "description": "This is the second game.",
-      "image": "/images/game2.jpg",
-      "downloadLink": "/download/game2"
-    }
-  ]
+    "gameplay": {
+      "mechanics": ["Double jump", "Wall sliding", "Power-ups"],
+      "controls": [
+        "Arrow keys for movement",
+        "Spacebar to jump",
+        "E to interact"
+      ]
+    },
+    "developmentInsights": [
+      "Implemented a custom physics engine for precise character control",
+      "Designed levels using a combination of hand-crafted and procedurally generated elements",
+      "Optimized performance to maintain 60 FPS on low-end devices"
+    ]
+  }
+]

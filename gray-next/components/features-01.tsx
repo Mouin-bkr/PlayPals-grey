@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Transition } from '@headlessui/react'
 import Image from 'next/image'
 import FeatureIllustration from '@/public/images/feature-illustration.png'
+import game1 from '@/public/images/game1.jpg'
 import FeatureImage01 from '@/public/images/feature-01.png'
 
 export default function Features01() {
@@ -26,48 +27,48 @@ export default function Features01() {
                 onClick={(e) => { e.preventDefault(); setTab(1); }}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <div className="font-inter-tight font-semibold text-zinc-900">AI Effects</div>
+                  <div className="font-inter-tight font-semibold text-zinc-900">Game 1</div>
                   <svg className={`fill-zinc-400 shrink-0 ml-2 ${tab !== 1 ? 'hidden' : ''}`} xmlns="http://www.w3.org/2000/svg" width="10" height="10">
                     <path d="M8.667.186H2.675a.999.999 0 0 0 0 1.998h3.581L.971 7.469a.999.999 0 1 0 1.412 1.412l5.285-5.285v3.58a.999.999 0 1 0 1.998 0V1.186a.999.999 0 0 0-.999-.999Z" />
                   </svg>
                 </div>
-                <div className="text-sm text-zinc-500">Visually structure your designs and structure them easily.</div>
+                <div className="text-sm text-zinc-500">description of the game.</div>
               </button>
               <button
                 className={`text-left px-4 py-5 border border-transparent rounded ${tab !== 2 ? 'bg-zinc-100 opacity-60 hover:opacity-100 transition' : '[background:linear-gradient(theme(colors.white),theme(colors.white))_padding-box,linear-gradient(120deg,theme(colors.zinc.300),theme(colors.zinc.100),theme(colors.zinc.300))_border-box] shadow-sm rotate-1'}`}
                 onClick={(e) => { e.preventDefault(); setTab(2); }}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <div className="font-inter-tight font-semibold text-zinc-900">Creative Mode</div>
+                  <div className="font-inter-tight font-semibold text-zinc-900">Game 2</div>
                   <svg className={`fill-zinc-400 shrink-0 ml-2 ${tab !== 2 ? 'hidden' : ''}`} xmlns="http://www.w3.org/2000/svg" width="10" height="10">
                     <path d="M8.667.186H2.675a.999.999 0 0 0 0 1.998h3.581L.971 7.469a.999.999 0 1 0 1.412 1.412l5.285-5.285v3.58a.999.999 0 1 0 1.998 0V1.186a.999.999 0 0 0-.999-.999Z" />
                   </svg>
                 </div>
-                <div className="text-sm text-zinc-500">Visually structure your designs and structure them easily.</div>
+                <div className="text-sm text-zinc-500">description of the game.</div>
               </button>
               <button
                 className={`text-left px-4 py-5 border border-transparent rounded ${tab !== 3 ? 'bg-zinc-100 opacity-60 hover:opacity-100 transition' : '[background:linear-gradient(theme(colors.white),theme(colors.white))_padding-box,linear-gradient(120deg,theme(colors.zinc.300),theme(colors.zinc.100),theme(colors.zinc.300))_border-box] shadow-sm rotate-1'}`}
                 onClick={(e) => { e.preventDefault(); setTab(3); }}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <div className="font-inter-tight font-semibold text-zinc-900">Realistic Images</div>
+                  <div className="font-inter-tight font-semibold text-zinc-900">Game 3</div>
                   <svg className={`fill-zinc-400 shrink-0 ml-2 ${tab !== 3 ? 'hidden' : ''}`} xmlns="http://www.w3.org/2000/svg" width="10" height="10">
                     <path d="M8.667.186H2.675a.999.999 0 0 0 0 1.998h3.581L.971 7.469a.999.999 0 1 0 1.412 1.412l5.285-5.285v3.58a.999.999 0 1 0 1.998 0V1.186a.999.999 0 0 0-.999-.999Z" />
                   </svg>
                 </div>
-                <div className="text-sm text-zinc-500">Visually structure your designs and structure them easily.</div>
+                <div className="text-sm text-zinc-500">description of the game.</div>
               </button >
               <button
                 className={`text-left px-4 py-5 border border-transparent rounded ${tab !== 4 ? 'bg-zinc-100 opacity-60 hover:opacity-100 transition' : '[background:linear-gradient(theme(colors.white),theme(colors.white))_padding-box,linear-gradient(120deg,theme(colors.zinc.300),theme(colors.zinc.100),theme(colors.zinc.300))_border-box] shadow-sm rotate-1'}`}
                 onClick={(e) => { e.preventDefault(); setTab(4); }}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <div className="font-inter-tight font-semibold text-zinc-900">Powerful Plugins</div>
+                  <div className="font-inter-tight font-semibold text-zinc-900">game 4</div>
                   <svg className={`fill-zinc-400 shrink-0 ml-2 ${tab !== 4 ? 'hidden' : ''}`} xmlns="http://www.w3.org/2000/svg" width="10" height="10">
                     <path d="M8.667.186H2.675a.999.999 0 0 0 0 1.998h3.581L.971 7.469a.999.999 0 1 0 1.412 1.412l5.285-5.285v3.58a.999.999 0 1 0 1.998 0V1.186a.999.999 0 0 0-.999-.999Z" />
                   </svg>
                 </div>
-                <div className="text-sm text-zinc-500">Visually structure your designs and structure them easily.</div>
+                <div className="text-sm text-zinc-500">description of the game.</div>
               </button >
             </div>
             {/* Tabs items */}
@@ -77,8 +78,8 @@ export default function Features01() {
                 <Transition show={tab === 1}>
                   <div className="w-full text-center transition ease-in-out data-[closed]:opacity-0 data-[enter]:duration-700 data-[enter]:data-[closed]:-translate-y-4 data-[closed]:absolute data-[leave]:duration-300 data-[leave]:data-[closed]:translate-y-4">                
                     <div className="inline-flex relative align-top">
-                      <Image className="rounded-t-lg border border-transparent [background:linear-gradient(theme(colors.white),theme(colors.white))_padding-box,linear-gradient(120deg,theme(colors.zinc.300),theme(colors.zinc.100),theme(colors.zinc.300))_border-box] box-content shadow-2xl" src={FeatureImage01} width={600} height={360} alt="Feature 01" />
-                      <Image className="absolute top-0 left-full -translate-x-[70%] -mr-20 max-md:w-[45%]" src={FeatureIllustration} width={273} height={288} alt="Illustration" aria-hidden="true" />
+                      <Image className="rounded-t-lg border border-transparent [background:linear-gradient(theme(colors.white),theme(colors.white))_padding-box,linear-gradient(120deg,theme(colors.zinc.300),theme(colors.zinc.100),theme(colors.zinc.300))_border-box] box-content shadow-2xl" src={game1} width={600} height={360} alt="Feature 01" />
+                      <Image className="absolute top-0 left-full -translate-x-[70%] -mr-20 max-md:w-[45%]" src={game1} width={273} height={288} alt="Illustration" aria-hidden="true" />
                     </div>
                   </div>
                 </Transition>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
@@ -76,19 +76,14 @@ interface FormData {
 export default function JobApplicationForm() {
   const [step, setStep] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
 
-  const totalSteps = 6; // Adjusted to 6 steps (excluding welcome)
+  const totalSteps = 6;
   const progress = Math.round(((step + 1) / totalSteps) * 100);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const onSubmit = (data: FormData) => {
     console.log("Final Data:", data);
@@ -100,10 +95,6 @@ export default function JobApplicationForm() {
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -50 },
   };
-
-  if (!isClient) {
-    return null; // or a loading spinner
-  }
 
   return (
     <div
@@ -118,24 +109,14 @@ export default function JobApplicationForm() {
 
       <div className="relative z-10 w-full max-w-2xl">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex space-x-2">
-            {Array.from({ length: totalSteps }, (_, i) => (
-              <div
-                key={i}
-                className={`h-2 w-10 rounded-full transition-all duration-300 ${
-                  step >= i
-                    ? "bg-black dark:bg-white"
-                    : "bg-gray-200 dark:bg-gray-700"
-                }`}
-              ></div>
-            ))}
+          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div
+              className="bg-primary h-2.5 rounded-full transition-all duration-300 ease-in-out"
+              style={{ width: `${progress}%` }}
+            ></div>
           </div>
           <div className="flex items-center ml-4">
-            <Switch 
-              checked={isDarkMode}
-              onCheckedChange={setIsDarkMode}
-              className="data-[state=checked]:bg-black data-[state=unchecked]:bg-gray-300"
-            />
+            <Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} />
             {isDarkMode ? (
               <Moon className="h-5 w-5 text-gray-400 ml-2" />
             ) : (
@@ -153,7 +134,7 @@ export default function JobApplicationForm() {
             exit="exit"
             transition={{ duration: 0.3 }}
           >
-            <Card className="w-full bg-white dark:bg-neutral-800 shadow-lg rounded-xl border border-gray-200 dark:border-neutral-700">
+            <Card className="w-full bg-white dark:bg-neutral-800 shadow-lg rounded-lg">
               <CardHeader>
                 <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl">
                   {getStepTitle(step)}
@@ -167,7 +148,7 @@ export default function JobApplicationForm() {
                       <Button
                         type="button"
                         variant="outline"
-                        className="text-sm font-medium inline-flex items-center justify-center border border-transparent rounded-lg tracking-normal transition px-2 py-1 bg-white text-black hover:bg-gray-100 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
+                        className="text-sm font-medium inline-flex items-center justify-center border border-transparent rounded-md tracking-normal transition px-2 py-1"
                         onClick={() => setStep(step - 1)}
                       >
                         Back
@@ -176,7 +157,7 @@ export default function JobApplicationForm() {
                     {step < totalSteps - 1 ? (
                       <Button
                         type="button"
-                        className="text-sm font-medium inline-flex items-center justify-center border border-transparent rounded-lg tracking-normal transition px-2 py-1 bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        className="text-sm font-medium inline-flex items-center justify-center border border-transparent rounded-md tracking-normal transition px-2 py-1"
                         onClick={() => setStep(step + 1)}
                       >
                         Next
@@ -184,7 +165,7 @@ export default function JobApplicationForm() {
                     ) : (
                       <Button
                         type="submit"
-                        className="text-sm font-medium inline-flex items-center justify-center border border-transparent rounded-lg tracking-normal transition px-2 py-1 bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+                        className="text-sm font-medium inline-flex items-center justify-center border border-transparent rounded-md tracking-normal transition px-2 py-1"
                       >
                         Submit Application
                       </Button>
@@ -221,7 +202,7 @@ function renderStepContent(step: number, register: any, errors: any) {
           <img
             src="https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif"
             alt="Welcome"
-            className="w-54 mx-auto mb-4"
+            className="w-57 mx-auto mb-4"
           />
           <p className="mb-4 text-gray-700 dark:text-gray-300">
             We're thrilled that you're considering applying. Learn more about
@@ -242,7 +223,7 @@ function renderStepContent(step: number, register: any, errors: any) {
               </Label>
               <Input
                 id="fullName"
-                className="mt-1 w-full bg-white border border-zinc-200 focus:border-black focus:ring-1 focus:ring-black shadow shadow-black/5 rounded text-zinc-600 text-sm px-4 py-2 placeholder-zinc-400 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:placeholder-zinc-500 dark:focus:border-white dark:focus:ring-white"
+                className="mt-1 w-full bg-white border border-zinc-200 focus:border-zinc-400 shadow shadow-black/5 rounded text-zinc-600 text-sm px-4 py-2 placeholder-zinc-400 dark:bg-neutral-800 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
                 {...register("fullName", {
                   required: "Name is required",
                   minLength: { value: 2, message: "Min 2 characters" },
@@ -264,7 +245,7 @@ function renderStepContent(step: number, register: any, errors: any) {
               <Input
                 id="email"
                 type="email"
-                className="mt-1 w-full bg-white border border-zinc-200 focus:border-black focus:ring-1 focus:ring-black shadow shadow-black/5 rounded text-zinc-600 text-sm px-4 py-2 placeholder-zinc-400 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:placeholder-zinc-500 dark:focus:border-white dark:focus:ring-white"
+                className="mt-1 w-full bg-white border border-zinc-200 focus:border-zinc-400 shadow shadow-black/5 rounded text-zinc-600 text-sm px-4 py-2 placeholder-zinc-400 dark:bg-neutral-800 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
                 {...register("email", { required: "Email is required" })}
               />
               {errors.email && (
@@ -283,7 +264,7 @@ function renderStepContent(step: number, register: any, errors: any) {
               <Input
                 id="phone"
                 type="tel"
-                className="mt-1 w-full bg-white border border-zinc-200 focus:border-black focus:ring-1 focus:ring-black shadow shadow-black/5 rounded text-zinc-600 text-sm px-4 py-2 placeholder-zinc-400 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:placeholder-zinc-500 dark:focus:border-black dark:focus:ring-black"
+                className="mt-1 w-full bg-white border border-zinc-200 focus:border-zinc-400 shadow shadow-black/5 rounded text-zinc-600 text-sm px-4 py-2 placeholder-zinc-400 dark:bg-neutral-800 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
                 {...register("phone")}
               />
             </div>
