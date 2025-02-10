@@ -1,212 +1,203 @@
-"use client";
+"use client"
 
-import { games } from "@/app/games/data/games";
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react"
+import { useParams } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
+import { games } from "@/app/games/data/games"
+import { ChevronLeft, ChevronRight, Play } from "lucide-react"
 
-export default function GamePage({ params }: { params: { id: string } }) {
-  const game = games.find((g) => g.id === params.id);
+export default function GamePage() {
+  const { id } = useParams()
+  const game = games.find((g) => g.id === id)
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const [activeSection, setActiveSection] = useState("overview")
 
   if (!game) {
-    notFound();
+    return <div>Game not found</div>
   }
 
-  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
-
   const nextMedia = () => {
-    setCurrentMediaIndex((prevIndex) =>
-      prevIndex === game.media.length - 1 ? 0 : prevIndex + 1
-    );
-  };
+    setCurrentMediaIndex((prevIndex) => (prevIndex === game.media.length - 1 ? 0 : prevIndex + 1))
+    setIsVideoPlaying(false)
+  }
 
   const prevMedia = () => {
-    setCurrentMediaIndex((prevIndex) =>
-      prevIndex === 0 ? game.media.length - 1 : prevIndex - 1
-    );
-  };
+    setCurrentMediaIndex((prevIndex) => (prevIndex === 0 ? game.media.length - 1 : prevIndex - 1))
+    setIsVideoPlaying(false)
+  }
+
+  useEffect(() => {
+    const interval = setInterval(nextMedia, 5000)
+    return () => clearInterval(interval)
+  }, [nextMedia, game.media]) // Added nextMedia and game.media as dependencies
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-gray-800 shadow-2xl rounded-lg overflow-hidden mb-8"
+          className="text-5xl font-extrabold text-center mb-8"
         >
-          <div className="relative h-96">
-            <Image
-              src={game.thumbnail || "/placeholder.svg"}
-              alt={game.title}
-              layout="fill"
-              objectFit="cover"
-              className="transition-opacity duration-300 hover:opacity-90"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <h1 className="text-5xl font-bold text-white text-center">
-                {game.title}
-              </h1>
-            </div>
-          </div>
-          <div className="p-6">
-            <p className="text-lg text-gray-300">{game.description}</p>
-          </div>
-        </motion.div>
+          {game.title}
+        </motion.h1>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-gray-800 shadow-2xl rounded-lg p-6 mb-8"
-        >
-          <h2 className="text-3xl font-bold mb-4">Media Gallery</h2>
-          <div className="relative">
-            <div className="aspect-w-16 aspect-h-9 mb-4">
-              {game.media[currentMediaIndex].type === "image" ? (
-                <Image
-                  src={game.media[currentMediaIndex].url || "/placeholder.svg"}
-                  alt={`${game.title} - Media ${currentMediaIndex + 1}`}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
-                />
-              ) : (
-                <video
-                  controls
-                  className="w-full h-full rounded-lg"
-                  poster={game.thumbnail}
-                >
-                  <source
-                    src={game.media[currentMediaIndex].url}
-                    type="video/mp4"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative h-[50vh] lg:h-[70vh] rounded-lg overflow-hidden"
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentMediaIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="absolute inset-0"
+              >
+                {game.media[currentMediaIndex].type === "image" ? (
+                  <Image
+                    src={game.media[currentMediaIndex].url || "/placeholder.svg"}
+                    alt={`${game.title} - Media ${currentMediaIndex + 1}`}
+                    layout="fill"
+                    objectFit="cover"
                   />
-                  Your browser does not support the video tag.
-                </video>
-              )}
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-1/2 left-4 transform -translate-y-1/2"
+                ) : (
+                  <div className="relative w-full h-full">
+                    <video
+                      src={game.media[currentMediaIndex].url}
+                      className="w-full h-full object-cover"
+                      autoPlay={isVideoPlaying}
+                      loop
+                      muted
+                    />
+                    {!isVideoPlaying && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <button
+                          className="w-16 h-16 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all flex items-center justify-center"
+                          onClick={() => setIsVideoPlaying(true)}
+                        >
+                          <Play className="h-8 w-8 text-white" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+            <button
+              className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2"
               onClick={prevMedia}
             >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-1/2 right-4 transform -translate-y-1/2"
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <button
+              className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2"
               onClick={nextMedia}
             >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="flex justify-center mt-4">
-            {game.media.map((_, index) => (
-              <button
-                key={index}
-                className={`h-2 w-2 rounded-full mx-1 ${
-                  index === currentMediaIndex ? "bg-white" : "bg-gray-500"
-                }`}
-                onClick={() => setCurrentMediaIndex(index)}
-              />
-            ))}
-          </div>
-        </motion.div>
+              <ChevronRight className="h-6 w-6" />
+            </button>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="details">Technical Details</TabsTrigger>
-              <TabsTrigger value="gameplay">Gameplay</TabsTrigger>
-              <TabsTrigger value="insights">Development Insights</TabsTrigger>
-            </TabsList>
-            <TabsContent
-              value="details"
-              className="bg-gray-800 rounded-lg p-6 mt-4"
-            >
-              <h3 className="text-2xl font-bold mb-4">Technical Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-xl font-semibold mb-2">Tech Stack</h4>
-                  <ul className="space-y-2">
-                    {game.technicalDetails.stack.map((tech) => (
-                      <li key={tech} className="flex items-center">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                        {tech}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2">Features</h4>
-                  <ul className="space-y-2">
-                    {game.technicalDetails.features.map((feature) => (
-                      <li key={feature} className="flex items-center">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </TabsContent>
-            <TabsContent
-              value="gameplay"
-              className="bg-gray-800 rounded-lg p-6 mt-4"
-            >
-              <h3 className="text-2xl font-bold mb-4">Gameplay</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-xl font-semibold mb-2">Mechanics</h4>
-                  <ul className="space-y-2">
-                    {game.gameplay.mechanics.map((mechanic) => (
-                      <li key={mechanic} className="flex items-center">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                        {mechanic}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold mb-2">Controls</h4>
-                  <ul className="space-y-2">
-                    {game.gameplay.controls.map((control) => (
-                      <li key={control} className="flex items-center">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                        {control}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </TabsContent>
-            <TabsContent
-              value="insights"
-              className="bg-gray-800 rounded-lg p-6 mt-4"
-            >
-              <h3 className="text-2xl font-bold mb-4">Development Insights</h3>
-              <ul className="space-y-2">
-                {game.developmentInsights.map((insight) => (
-                  <li key={insight} className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    {insight}
-                  </li>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="space-y-8"
+          >
+            <div>
+              <h2 className="text-2xl font-bold mb-4">About the Game</h2>
+              <p className="text-gray-300">{game.description}</p>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Game Details</h2>
+              <div className="flex space-x-4">
+                {["overview", "technical", "gameplay"].map((section) => (
+                  <button
+                    key={section}
+                    className={`px-4 py-2 rounded-full ${
+                      activeSection === section ? "bg-white text-gray-900" : "bg-gray-700 text-white"
+                    }`}
+                    onClick={() => setActiveSection(section)}
+                  >
+                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                  </button>
                 ))}
-              </ul>
-            </TabsContent>
-          </Tabs>
-        </motion.div>
+              </div>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSection}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-4"
+                >
+                  {activeSection === "overview" && (
+                    <div className="space-y-4">
+                      <p>{game.description}</p>
+                      <ul className="list-disc list-inside">
+                        {game.developmentInsights.map((insight, index) => (
+                          <li key={index}>{insight}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {activeSection === "technical" && (
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Tech Stack</h3>
+                        <ul className="list-disc list-inside">
+                          {game.technicalDetails.stack.map((tech, index) => (
+                            <li key={index}>{tech}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Features</h3>
+                        <ul className="list-disc list-inside">
+                          {game.technicalDetails.features.map((feature, index) => (
+                            <li key={index}>{feature}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                  {activeSection === "gameplay" && (
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Mechanics</h3>
+                        <ul className="list-disc list-inside">
+                          {game.gameplay.mechanics.map((mechanic, index) => (
+                            <li key={index}>{mechanic}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">Controls</h3>
+                        <ul className="list-disc list-inside">
+                          {game.gameplay.controls.map((control, index) => (
+                            <li key={index}>{control}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
-  );
+  )
 }
+

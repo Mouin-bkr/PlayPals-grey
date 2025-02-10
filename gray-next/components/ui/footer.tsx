@@ -1,110 +1,354 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import Logo from '@/public/images/logo.jpeg'
+"use client";
 
-export default function Footer() {
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  MapPin,
+  Mail,
+  Phone,
+  Twitter,
+  Facebook,
+  Instagram,
+  Linkedin,
+} from "lucide-react";
+import Logo from "@/public/images/logo.jpeg";
+
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+  company: string;
+  projectType: string;
+  description: string;
+  budget: string;
+  timeline: string;
+  contactInfo: string;
+}
+
+export default function ContactFooter() {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    message: "",
+    company: "",
+    projectType: "",
+    description: "",
+    budget: "",
+    timeline: "",
+    contactInfo: "",
+  });
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Form submitted", formData);
+  };
+
   return (
-    <footer>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <footer className="bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+          {/* Contact Form */}
+          <div className="lg:col-span-2 bg-white p-8 rounded-xl shadow-lg">
+            <h2 className="text-3xl font-bold mb-6">Get in Touch</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  className="w-full p-3 border rounded-lg"
+                  onChange={handleChange}
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  className="w-full p-3 border rounded-lg"
+                  onChange={handleChange}
+                />
+              </div>
+              <textarea
+                name="message"
+                placeholder="Message"
+                className="w-full p-3 border rounded-lg"
+                rows={4}
+                onChange={handleChange}
+              ></textarea>
 
-        {/* Top area: Blocks */}
-        <div className="grid sm:grid-cols-12 gap-8 py-8 md:py-12 border-t border-zinc-200">
+              {/* Business Inquiry Section */}
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold mb-4">Business Inquiry</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    name="company"
+                    placeholder="Company Name (if applicable)"
+                    className="w-full p-3 border rounded-lg"
+                    onChange={handleChange}
+                  />
+                  <select
+                    name="projectType"
+                    className="w-full p-3 border rounded-lg"
+                    onChange={handleChange}
+                  >
+                    <option value="">Select Project Type</option>
+                    <option value="Game Development">Game Development</option>
+                    <option value="Web Development">Web Development</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <input
+                    type="text"
+                    name="budget"
+                    placeholder="Budget Range"
+                    className="w-full p-3 border rounded-lg"
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="text"
+                    name="timeline"
+                    placeholder="Timeline"
+                    className="w-full p-3 border rounded-lg"
+                    onChange={handleChange}
+                  />
+                </div>
+                <textarea
+                  name="description"
+                  placeholder="Project Description"
+                  className="w-full p-3 border rounded-lg mt-4"
+                  rows={3}
+                  onChange={handleChange}
+                ></textarea>
+              </div>
 
-          {/* 1st block */}
-          <div className="sm:col-span-6 md:col-span-3 lg:col-span-6 max-sm:order-1 flex flex-col">
-            <div className="mb-4">
-              {/* Logo */}
-              <Link className="flex items-center justify-center bg-white w-8 h-8 rounded shadow-sm shadow-zinc-950/20" href="/">
-                <Image src={Logo} width={24} height={24} alt="Logo" />
+              <button
+                type="submit"
+                className="w-full bg-black text-white p-3 rounded-lg hover:bg-gray-800 transition duration-300"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+
+          {/* Company Info and Map */}
+          <div className="space-y-8">
+            <div>
+              <Link href="/" className="inline-block">
+                <Image
+                  src={Logo || "/placeholder.svg"}
+                  width={60}
+                  height={60}
+                  alt="Logo"
+                  className="rounded-full"
+                />
               </Link>
+              <h3 className="text-2xl font-bold mt-4 mb-2">PlayPals Studio</h3>
+              <p className="text-gray-600 mb-4">
+                Crafting immersive gaming experiences and cutting-edge web
+                solutions.
+              </p>
+              <div className="space-y-2 text-gray-600">
+                <p className="flex items-center gap-2">
+                  <Mail size={18} /> contact@playpals.com
+                </p>
+                <p className="flex items-center gap-2">
+                  <Phone size={18} /> +99 99 999 99
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin size={18} /> 77 PlayPals St, Tunis
+                </p>
+              </div>
             </div>
-            <div className="grow text-sm text-zinc-500">&copy; Cruip.com. All rights reserved.</div>
-            {/* Social links */}
-            <ul className="flex space-x-4 mt-4 mb-1">
-              <li>
-                <a className="flex justify-center items-center text-zinc-700 hover:text-zinc-900 transition" href="#0" aria-label="Twitter">
-                  <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                    <path d="m7.063 3 3.495 4.475L14.601 3h2.454l-5.359 5.931L18 17h-4.938l-3.866-4.893L4.771 17H2.316l5.735-6.342L2 3h5.063Zm-.74 1.347H4.866l8.875 11.232h1.36L6.323 4.347Z" />
-                  </svg>
+
+            {/* Map */}
+            <div className="w-full h-64 rounded-xl overflow-hidden">
+              <iframe
+                className="w-full h-full"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.835434509366!2d144.95373631590466!3d-37.81627974202192!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0xf577e97b60b3baf4!2sMelbourne%20VIC%2C%20Australia!5e0!3m2!1sen!2sus!4v1632738732452!5m2!1sen!2sus"
+                allowFullScreen
+                loading="lazy"
+              ></iframe>
+            </div>
+
+            {/* Social Links */}
+            <div>
+              <h4 className="text-lg font-semibold mb-3">Follow Us</h4>
+              <div className="flex space-x-4">
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition duration-300"
+                >
+                  <Twitter size={24} />
                 </a>
-              </li>
-              <li>
-                <a className="flex justify-center items-center text-zinc-700 hover:text-zinc-900 transition" href="#0" aria-label="Medium">
-                  <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                    <path d="M17 2H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Zm-1.708 3.791-.858.823a.251.251 0 0 0-.1.241V12.9a.251.251 0 0 0 .1.241l.838.823v.181h-4.215v-.181l.868-.843c.085-.085.085-.11.085-.241V7.993L9.6 14.124h-.329l-2.81-6.13V12.1a.567.567 0 0 0 .156.472l1.129 1.37v.181h-3.2v-.181l1.129-1.37a.547.547 0 0 0 .146-.472V7.351A.416.416 0 0 0 5.683 7l-1-1.209V5.61H7.8l2.4 5.283 2.122-5.283h2.971l-.001.181Z" />
-                  </svg>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition duration-300"
+                >
+                  <Facebook size={24} />
                 </a>
-              </li>
-              <li>
-                <a className="flex justify-center items-center text-zinc-700 hover:text-zinc-900 transition" href="#0" aria-label="Telegram">
-                  <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                    <path d="M17.968 3.276a.338.338 0 0 0-.232-.253 1.192 1.192 0 0 0-.63.045S3.087 8.106 2.286 8.664c-.172.121-.23.19-.259.272-.138.4.293.573.293.573l3.613 1.177a.388.388 0 0 0 .183-.011c.822-.519 8.27-5.222 8.7-5.38.068-.02.118 0 .1.049-.172.6-6.606 6.319-6.64 6.354a.138.138 0 0 0-.05.118l-.337 3.528s-.142 1.1.956 0a30.66 30.66 0 0 1 1.9-1.738c1.242.858 2.58 1.806 3.156 2.3a1 1 0 0 0 .732.283.825.825 0 0 0 .7-.622S17.894 5.292 17.98 3.909c.008-.135.021-.217.021-.317a1.177 1.177 0 0 0-.032-.316Z" />
-                  </svg>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition duration-300"
+                >
+                  <Instagram size={24} />
                 </a>
-              </li>
-            </ul>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition duration-300"
+                >
+                  <Linkedin size={24} />
+                </a>
+              </div>
+            </div>
           </div>
-
-          {/* 2nd block */}
-          <div className="sm:col-span-6 md:col-span-3 lg:col-span-2">
-            <h6 className="text-sm text-zinc-800 font-medium mb-2">Company</h6>
-            <ul className="text-sm space-y-2">
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">About us</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Diversity & Inclusion</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Blog</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Careers</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Financial statements</a>
-              </li>
-            </ul>
-          </div>
-
-          {/* 3rd block */}
-          <div className="sm:col-span-6 md:col-span-3 lg:col-span-2">
-            <h6 className="text-sm text-zinc-800 font-medium mb-2">Resources</h6>
-            <ul className="text-sm space-y-2">
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Community</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Terms of service</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Collaboration features</a>
-              </li>
-            </ul>
-          </div>
-
-          {/* 4th block */}
-          <div className="sm:col-span-6 md:col-span-3 lg:col-span-2">
-            <h6 className="text-sm text-zinc-800 font-medium mb-2">Legals</h6>
-            <ul className="text-sm space-y-2">
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Refund policy</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Terms & Conditions</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Privacy policy</a>
-              </li>
-              <li>
-                <a className="text-zinc-500 hover:text-zinc-900 transition" href="#0">Brand Kit</a>
-              </li>
-            </ul>
-          </div>
-
         </div>
 
+        {/* Footer Links */}
+        <div className="mt-16 pt-8 border-t border-gray-200">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <h6 className="text-sm font-semibold text-gray-800 mb-3">
+                Company
+              </h6>
+              <ul className="text-sm space-y-2">
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    About us
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Careers
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Partners
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h6 className="text-sm font-semibold text-gray-800 mb-3">
+                Resources
+              </h6>
+              <ul className="text-sm space-y-2">
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Support Center
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Tutorials
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h6 className="text-sm font-semibold text-gray-800 mb-3">
+                Services
+              </h6>
+              <ul className="text-sm space-y-2">
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Game Development
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Web Development
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Consulting
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h6 className="text-sm font-semibold text-gray-800 mb-3">
+                Legal
+              </h6>
+              <ul className="text-sm space-y-2">
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-gray-600 hover:text-black transition"
+                    href="#0"
+                  >
+                    Cookie Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-8 pt-8 border-t border-gray-200 text-sm text-center text-gray-600">
+          &copy; {new Date().getFullYear()} PlayPals Studio. All rights
+          reserved.
+        </div>
       </div>
     </footer>
-  )
+  );
 }

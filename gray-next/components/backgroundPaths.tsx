@@ -1,4 +1,3 @@
-// app/page.tsx (or app/home/page.tsx)
 "use client";
 
 import { motion } from "framer-motion";
@@ -101,9 +100,10 @@ export default function BackgroundPaths({
 
           {/* New descriptive paragraph */}
           <p className="text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8">
-            Play Pals is an innovative startup dedicated to reimagining play and creativity.
-            Join us on our journey as we build a vibrant community of dreamers and doers. 
-            Learn more about us and apply to be part of our exciting adventure!
+            Play Pals is an innovative startup dedicated to reimagining play and
+            creativity. Join us on our journey as we build a vibrant community
+            of dreamers and doers. Learn more about us and apply to be part of
+            our exciting adventure!
           </p>
 
           <div

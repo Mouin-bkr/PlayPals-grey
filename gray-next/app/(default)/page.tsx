@@ -17,14 +17,13 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Features01 />
       <Features02 />
+      <Features01 />
       <Features03 />
       <PricingTabs />
       <Testimonials />
-      <Cta />
-      <ContactSection />
       <FloatingNav />
+      <Cta />
     </>
   );
 }
