@@ -7,7 +7,7 @@ export const games = [
     media: [
       {
         type: "image",
-        url: "/images/game1.jpg",
+        url: "/images/game-3d.png",
       },
       {
         type: "image",

@@ -7,7 +7,7 @@ import FeatureImage05 from '@/public/images/feature-post-05.png'
 
 export default function Features02() {
   return (
-    <section>
+    <section >
       <div className="py-12 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="relative max-w-3xl mx-auto text-center pb-12 md:pb-20">

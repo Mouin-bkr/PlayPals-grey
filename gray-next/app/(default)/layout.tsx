@@ -1,8 +1,7 @@
 "use client";
 
-import Header from "@/components/ui/header";
-import Footer from "@/components/ui/footer";
 import Navbar from "@/components/navbar/Navbar";
+import CombinedFooter from "@/components/combinedfooter";
 
 export default function DefaultLayout({
   children,
@@ -14,7 +13,7 @@ export default function DefaultLayout({
       <Navbar />
       <main className="grow">{children}</main>
 
-      <Footer />
+      <CombinedFooter />
     </>
   );
 }

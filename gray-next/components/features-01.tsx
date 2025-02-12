@@ -10,7 +10,7 @@ export default function Features01() {
   const [tab, setTab] = useState<number>(0);
 
   return (
-    <section className="relative bg-zinc-50">
+    <section id="games" className="relative bg-zinc-50">
       <div className="py-12 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mx-auto text-center pb-12">
