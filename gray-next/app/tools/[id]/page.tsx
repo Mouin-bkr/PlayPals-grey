@@ -1,194 +1,405 @@
 "use client";
 
-import { tools } from "@/app/tools/data/tools";
-import { notFound } from "next/navigation";
+import { useState, useRef, JSX } from "react";
+import { useParams } from "next/navigation";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Code,
+  Terminal,
+  Cpu,
+  Wrench,
+  GitBranch,
+  Database,
+  Download,
+  ExternalLink,
+  BookOpen,
+  Users,
+} from "lucide-react";
+import { tools } from "../data/tools";
 
-export default function ToolPage({ params }: { params: { id: string } }) {
-  const tool = tools.find((t) => t.id === params.id);
+type SectionKey = "overview" | "technical" | "development" | "documentation";
 
-  if (!tool) {
-    notFound();
-  }
+export default function ToolPage() {
+  const { id } = useParams();
+  const tool = tools.find((t) => t.id === id);
+  const [activeSection, setActiveSection] = useState<SectionKey>("overview");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
 
-  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
-  const nextMedia = () => {
-    setCurrentMediaIndex((prevIndex) =>
-      prevIndex === tool.media.length - 1 ? 0 : prevIndex + 1
-    );
-  };
+  if (!tool) return <div>Tool not found</div>;
 
-  const prevMedia = () => {
-    setCurrentMediaIndex((prevIndex) =>
-      prevIndex === 0 ? tool.media.length - 1 : prevIndex - 1
-    );
+  const sections: Record<
+    SectionKey,
+    {
+      icon: JSX.Element;
+      title: string;
+      content: JSX.Element;
+    }
+  > = {
+    overview: {
+      icon: <Wrench className="w-5 h-5" />,
+      title: "Overview",
+      content: (
+        <div className="space-y-12">
+          <div className="prose prose-invert max-w-none">
+            <p className="text-xl text-gray-300 leading-relaxed">
+              {tool.description}
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-cyan-400">
+              Key Features
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {tool.features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700 hover:border-cyan-500/50 transition-colors"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                      <Code className="w-5 h-5 text-cyan-400" />
+                    </div>
+                    <p className="text-gray-300 flex-1">{feature}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-cyan-400">
+              Specifications
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="bg-gray-800/50 p-6 rounded-xl">
+                <p className="text-sm text-gray-400 mb-2">Language</p>
+                <p className="text-lg font-semibold">{tool.specs.language}</p>
+              </div>
+              <div className="bg-gray-800/50 p-6 rounded-xl">
+                <p className="text-sm text-gray-400 mb-2">License</p>
+                <p className="text-lg font-semibold">{tool.specs.license}</p>
+              </div>
+              <div className="bg-gray-800/50 p-6 rounded-xl">
+                <p className="text-sm text-gray-400 mb-2">Support</p>
+                <p className="text-lg font-semibold">{tool.specs.support}</p>
+              </div>
+              <div className="bg-gray-800/50 p-6 rounded-xl">
+                <p className="text-sm text-gray-400 mb-2">Platforms</p>
+                <div className="flex flex-wrap gap-2">
+                  {tool.specs.platforms.map((platform, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 text-sm bg-gray-700 rounded-md"
+                    >
+                      {platform}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    technical: {
+      icon: <Cpu className="w-5 h-5" />,
+      title: "Technical",
+      content: (
+        <div className="space-y-12">
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-cyan-400">
+              Architecture
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {tool.technical.architecture.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                      <Database className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <p className="text-gray-300">{item}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-cyan-400">
+              Technical Features
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {tool.technical.features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                      <Cpu className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <p className="text-gray-300">{feature}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    development: {
+      icon: <GitBranch className="w-5 h-5" />,
+      title: "Development",
+      content: (
+        <div className="space-y-12">
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-cyan-400">
+              Development Process
+            </h3>
+            <div className="grid grid-cols-1 gap-6">
+              {tool.development.challenges.map((challenge, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                      <GitBranch className="w-5 h-5 text-green-400" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold mb-2">
+                        Challenge {index + 1}
+                      </h4>
+                      <p className="text-gray-300">{challenge}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-cyan-400">
+              Tech Stack
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {tool.development.techStack.map((tech, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-gray-800/50 p-4 rounded-xl text-center"
+                >
+                  <p className="text-gray-300">{tech}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    documentation: {
+      icon: <BookOpen className="w-5 h-5" />,
+      title: "Docs",
+      content: (
+        <div className="space-y-12">
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-cyan-400">
+              Documentation
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {tool.documentation.guides.map((guide, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700 hover:border-cyan-500/50 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-cyan-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-gray-300 group-hover:text-cyan-400 transition-colors">
+                        {guide}
+                      </p>
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                        <ExternalLink className="w-4 h-4" />
+                        <span>View Guide</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-bold mb-6 text-cyan-400">Examples</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {tool.documentation.examples.map((example, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700 hover:border-cyan-500/50 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                      <Code className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-gray-300 group-hover:text-purple-400 transition-colors">
+                        {example}
+                      </p>
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                        <Terminal className="w-4 h-4" />
+                        <span>View Example</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
+    },
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div ref={containerRef} className="min-h-screen bg-[#0A0A0A] text-white">
+      {/* Hero Section */}
+      <div className="relative h-[60vh] overflow-hidden">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="bg-gray-800 shadow-2xl rounded-lg overflow-hidden mb-8"
+          style={{ y }}
+          className="absolute inset-0 z-0 bg-gradient-to-br from-cyan-900 to-blue-900"
         >
-          <div className="relative h-96">
-            <Image
-              src={tool.thumbnail || "/placeholder.svg"}
-              alt={tool.title}
-              layout="fill"
-              objectFit="cover"
-              className="transition-opacity duration-300 hover:opacity-90"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <h1 className="text-5xl font-bold text-white text-center">
-                {tool.title}
-              </h1>
-            </div>
-          </div>
-          <div className="p-6">
-            <p className="text-lg text-gray-300">{tool.description}</p>
-          </div>
+          <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0A0A0A]/50 to-[#0A0A0A]" />
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-gray-800 shadow-2xl rounded-lg p-6 mb-8"
-        >
-          <h2 className="text-3xl font-bold mb-4">Media Gallery</h2>
-          <div className="relative">
-            <div className="aspect-w-16 aspect-h-9 mb-4">
-              {tool.media[currentMediaIndex].type === "image" ? (
-                <Image
-                  src={tool.media[currentMediaIndex].url || "/placeholder.svg"}
-                  alt={`${tool.title} - Media ${currentMediaIndex + 1}`}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
-                />
-              ) : (
-                <video
-                  controls
-                  className="w-full h-full rounded-lg"
-                  poster={tool.thumbnail}
-                >
-                  <source
-                    src={tool.media[currentMediaIndex].url}
-                    type="video/mp4"
-                  />
-                  Your browser does not support the video tag.
-                </video>
-              )}
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-1/2 left-4 transform -translate-y-1/2"
-              onClick={prevMedia}
+        <div className="absolute inset-0 flex flex-col justify-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-3xl"
             >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-1/2 right-4 transform -translate-y-1/2"
-              onClick={nextMedia}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="flex justify-center mt-4">
-            {tool.media.map((_, index) => (
-              <button
-                key={index}
-                className={`h-2 w-2 rounded-full mx-1 ${
-                  index === currentMediaIndex ? "bg-white" : "bg-gray-500"
-                }`}
-                onClick={() => setCurrentMediaIndex(index)}
-              />
-            ))}
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="details">Technical Details</TabsTrigger>
-              <TabsTrigger value="usecases">Use Cases</TabsTrigger>
-              <TabsTrigger value="insights">Development Insights</TabsTrigger>
-            </TabsList>
-            <TabsContent
-              value="details"
-              className="bg-gray-800 rounded-lg p-6 mt-4"
-            >
-              <h3 className="text-2xl font-bold mb-4">Technical Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-xl font-semibold mb-2">Tech Stack</h4>
-                  <ul className="space-y-2">
-                    {tool.technicalDetails.stack.map((tech) => (
-                      <li key={tech} className="flex items-center">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                        {tech}
-                      </li>
-                    ))}
-                  </ul>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                  <Code className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold mb-2">Features</h4>
-                  <ul className="space-y-2">
-                    {tool.technicalDetails.features.map((feature) => (
-                      <li key={feature} className="flex items-center">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+                  <h1 className="text-5xl font-bold mb-2">{tool.title}</h1>
+                  <p className="text-xl text-gray-300">{tool.tagline}</p>
                 </div>
               </div>
-            </TabsContent>
-            <TabsContent
-              value="usecases"
-              className="bg-gray-800 rounded-lg p-6 mt-4"
-            >
-              <h3 className="text-2xl font-bold mb-4">Use Cases</h3>
-              <ul className="space-y-2">
-                {tool.useCases.map((useCase) => (
-                  <li key={useCase} className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    {useCase}
-                  </li>
+
+              <div className="flex flex-wrap gap-4">
+                {tool.specs.platforms.map((platform, index) => (
+                  <span
+                    key={index}
+                    className="px-4 py-2 bg-gray-800/80 rounded-full text-sm backdrop-blur-sm"
+                  >
+                    {platform}
+                  </span>
                 ))}
-              </ul>
-            </TabsContent>
-            <TabsContent
-              value="insights"
-              className="bg-gray-800 rounded-lg p-6 mt-4"
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Section Navigation */}
+        <div className="flex flex-wrap gap-4 mb-12">
+          {Object.entries(sections).map(([key, section]) => (
+            <button
+              key={key}
+              onClick={() => setActiveSection(key as SectionKey)}
+              className={`px-6 py-3 rounded-xl transition-all flex items-center gap-2 ${
+                activeSection === key
+                  ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+              }`}
             >
-              <h3 className="text-2xl font-bold mb-4">Development Insights</h3>
-              <ul className="space-y-2">
-                {tool.developmentInsights.map((insight) => (
-                  <li key={insight} className="flex items-center">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    {insight}
-                  </li>
-                ))}
-              </ul>
-            </TabsContent>
-          </Tabs>
+              {section.icon}
+              <span>{section.title}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Active Section Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeSection}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {sections[activeSection].content}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Download Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-16 text-center"
+        >
+          <h2 className="text-3xl font-bold mb-8 text-cyan-400">
+            Ready to Get Started?
+          </h2>
+          <div className="flex justify-center gap-4">
+            <a
+              href="#"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-bold hover:from-cyan-600 hover:to-blue-600 transition-all transform hover:scale-105"
+            >
+              <Download className="w-5 h-5" />
+              Download SDK
+            </a>
+            <a
+              href="#"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gray-800 rounded-xl font-bold hover:bg-gray-700 transition-all transform hover:scale-105"
+            >
+              <BookOpen className="w-5 h-5" />
+              View Documentation
+            </a>
+          </div>
         </motion.div>
       </div>
     </div>

@@ -1,203 +1,254 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-import { games } from "@/app/games/data/games"
-import { ChevronLeft, ChevronRight, Play } from "lucide-react"
+"use client";
+import { useState, useEffect, useRef } from "react";
+import { useParams } from "next/navigation";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useSpring,
+} from "framer-motion";
+import Image from "next/image";
+import { Star, Users, Trophy } from "lucide-react";
+import { games } from "../data/games";
 
 export default function GamePage() {
-  const { id } = useParams()
-  const game = games.find((g) => g.id === id)
-  const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
-  const [activeSection, setActiveSection] = useState("overview")
+  const { id } = useParams();
+  const game = games.find((g) => g.id === id);
+  const [activeSection, setActiveSection] = useState("overview");
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
 
-  if (!game) {
-    return <div>Game not found</div>
-  }
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
+  const y = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
 
-  const nextMedia = () => {
-    setCurrentMediaIndex((prevIndex) => (prevIndex === game.media.length - 1 ? 0 : prevIndex + 1))
-    setIsVideoPlaying(false)
-  }
+  const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
+  const scaleSpring = useSpring(scale, springConfig);
+  const ySpring = useSpring(y, springConfig);
 
-  const prevMedia = () => {
-    setCurrentMediaIndex((prevIndex) => (prevIndex === 0 ? game.media.length - 1 : prevIndex - 1))
-    setIsVideoPlaying(false)
-  }
+  if (!game) return <div>Game not found</div>;
 
-  useEffect(() => {
-    const interval = setInterval(nextMedia, 5000)
-    return () => clearInterval(interval)
-  }, [nextMedia, game.media]) // Added nextMedia and game.media as dependencies
+  const sections = {
+    overview: {
+      title: "Overview",
+      icon: <Star className="w-5 h-5" />,
+    },
+    gameplay: {
+      title: "Gameplay",
+      icon: <Trophy className="w-5 h-5" />,
+    },
+    development: {
+      title: "Development",
+      icon: <Users className="w-5 h-5" />,
+    },
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-5xl font-extrabold text-center mb-8"
-        >
-          {game.title}
-        </motion.h1>
+    <div className="min-h-screen bg-black text-white">
+      {/* Hero Section */}
+      <motion.div
+        ref={containerRef}
+        className="relative h-screen"
+        style={{ opacity, scale: scaleSpring, y: ySpring }}
+      >
+        {/* Background Video/Image with Overlay */}
+        <div className="absolute inset-0 overflow-hidden  ">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black" />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+            src="/videos/hero-background.mp4"
+          />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Hero Content */}
+        <div className="relative h-full flex items-center justify-center text-center px-4">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative h-[50vh] lg:h-[70vh] rounded-lg overflow-hidden"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="max-w-4xl"
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentMediaIndex}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0"
-              >
-                {game.media[currentMediaIndex].type === "image" ? (
-                  <Image
-                    src={game.media[currentMediaIndex].url || "/placeholder.svg"}
-                    alt={`${game.title} - Media ${currentMediaIndex + 1}`}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                ) : (
-                  <div className="relative w-full h-full">
-                    <video
-                      src={game.media[currentMediaIndex].url}
-                      className="w-full h-full object-cover"
-                      autoPlay={isVideoPlaying}
-                      loop
-                      muted
-                    />
-                    {!isVideoPlaying && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <button
-                          className="w-16 h-16 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-all flex items-center justify-center"
-                          onClick={() => setIsVideoPlaying(true)}
-                        >
-                          <Play className="h-8 w-8 text-white" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-            <button
-              className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2"
-              onClick={prevMedia}
+            <motion.h1
+              className="text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            <button
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2"
-              onClick={nextMedia}
+              {game.title}
+            </motion.h1>
+            <motion.p
+              className="text-2xl text-gray-300 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <ChevronRight className="h-6 w-6" />
-            </button>
+              {game.tagline}
+            </motion.p>
+            <motion.div
+              className="flex justify-center gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-full font-bold text-lg transition-all transform hover:scale-105">
+                Play Now
+              </button>
+              <button className="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-full font-bold text-lg backdrop-blur-sm transition-all transform hover:scale-105">
+                Learn More
+              </button>
+            </motion.div>
           </motion.div>
+        </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="space-y-8"
-          >
-            <div>
-              <h2 className="text-2xl font-bold mb-4">About the Game</h2>
-              <p className="text-gray-300">{game.description}</p>
-            </div>
+        {/* Scroll Indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{
+            y: [0, 10, 0],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+        >
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-white/50 rounded-full mt-2" />
+          </div>
+        </motion.div>
+      </motion.div>
 
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Game Details</h2>
-              <div className="flex space-x-4">
-                {["overview", "technical", "gameplay"].map((section) => (
+      {/* Main Content */}
+      <div className="relative z-10 bg-black">
+        {/* Navigation */}
+        <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex justify-between items-center py-4">
+              <div className="flex space-x-8">
+                {Object.entries(sections).map(([key, section]) => (
                   <button
-                    key={section}
-                    className={`px-4 py-2 rounded-full ${
-                      activeSection === section ? "bg-white text-gray-900" : "bg-gray-700 text-white"
+                    key={key}
+                    onClick={() => setActiveSection(key)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all ${
+                      activeSection === key
+                        ? "bg-white/10 text-white"
+                        : "text-gray-400 hover:text-white"
                     }`}
-                    onClick={() => setActiveSection(section)}
                   >
-                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                    {section.icon}
+                    <span>{section.title}</span>
                   </button>
                 ))}
               </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeSection}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="mt-4"
-                >
-                  {activeSection === "overview" && (
-                    <div className="space-y-4">
-                      <p>{game.description}</p>
-                      <ul className="list-disc list-inside">
-                        {game.developmentInsights.map((insight, index) => (
-                          <li key={index}>{insight}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {activeSection === "technical" && (
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">Tech Stack</h3>
-                        <ul className="list-disc list-inside">
-                          {game.technicalDetails.stack.map((tech, index) => (
-                            <li key={index}>{tech}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">Features</h3>
-                        <ul className="list-disc list-inside">
-                          {game.technicalDetails.features.map((feature, index) => (
-                            <li key={index}>{feature}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  )}
-                  {activeSection === "gameplay" && (
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">Mechanics</h3>
-                        <ul className="list-disc list-inside">
-                          {game.gameplay.mechanics.map((mechanic, index) => (
-                            <li key={index}>{mechanic}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">Controls</h3>
-                        <ul className="list-disc list-inside">
-                          {game.gameplay.controls.map((control, index) => (
-                            <li key={index}>{control}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              </AnimatePresence>
+              <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-all">
+                Download
+              </button>
             </div>
-          </motion.div>
+          </div>
+        </div>
+
+        {/* Content Sections */}
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSection}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              {activeSection === "overview" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+                  <div>
+                    <h2 className="text-3xl font-bold mb-6">About the Game</h2>
+                    <p className="text-gray-400 text-lg leading-relaxed mb-8">
+                      {game.description}
+                    </p>
+                    <div className="grid grid-cols-2 gap-4">
+                      {game.features.map((feature, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="bg-white/5 backdrop-blur-lg rounded-xl p-4 hover:bg-white/10 transition-all"
+                        >
+                          <p className="text-gray-300">{feature}</p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="relative h-[600px] rounded-2xl overflow-hidden">
+                    <Image
+                      src={game.media[0].url}
+                      alt={game.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "gameplay" && (
+                <div className="space-y-16">
+                  <div>
+                    <h2 className="text-3xl font-bold mb-8">Game Mechanics</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {game.gameplay.mechanics.map((mechanic, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl p-6 hover:from-blue-500/20 hover:to-purple-500/20 transition-all"
+                        >
+                          <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mb-4">
+                            <span className="text-blue-400 font-bold">
+                              {index + 1}
+                            </span>
+                          </div>
+                          <p className="text-gray-300">{mechanic}</p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "development" && (
+                <div className="space-y-16">
+                  <div>
+                    <h2 className="text-3xl font-bold mb-8">
+                      Development Journey
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {game.development.insights.map((insight, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="bg-white/5 backdrop-blur-lg rounded-xl p-6 hover:bg-white/10 transition-all"
+                        >
+                          <p className="text-gray-300">{insight}</p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>
-  )
+  );
 }
-

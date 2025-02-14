@@ -81,12 +81,13 @@ const CombinedFooter = () => {
                   <div className="space-y-4">
                     {jobListings.map((job) => (
                       <motion.div
+
                         key={job.id}
                         className="bg-zinc-50 p-4 rounded-lg cursor-pointer transition-shadow duration-300 hover:shadow-md"
-                        whileHover={{ scale: 1.03 }}
+                        whileHover={{ scale: 1.02 }}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.5 }}
                       >
                         <h3 className="text-lg font-semibold">{job.title}</h3>
                         <p className="text-zinc-600">
@@ -96,7 +97,7 @@ const CombinedFooter = () => {
                           href={`/apply0`}
                           className="text-zinc-900 hover:underline mt-2 inline-block"
                         >
-                          View Details
+                          Apply
                         </Link>
                       </motion.div>
                     ))}

@@ -65,14 +65,14 @@ export default function Features01() {
                       <div className="inline-flex relative align-top">
                         <Image
                           className="rounded-t-lg border border-transparent [background:linear-gradient(theme(colors.white),theme(colors.white))_padding-box,linear-gradient(120deg,theme(colors.zinc.300),theme(colors.zinc.100),theme(colors.zinc.300))_border-box] box-content shadow-2xl"
-                          src={game.thumbnail || "/placeholder.svg"}
+                          src={game.media[0].url || "/placeholder.svg"}
                           width={600}
                           height={360}
                           alt={game.title}
                         />
                         <Image
                           className="absolute top-0 left-full -translate-x-[70%] -mr-20 max-md:w-[45%]"
-                          src={game.media[0]?.url || "/placeholder.svg"}
+                          src={game.media[2]?.url || "/placeholder.svg"}
                           width={273}
                           height={288}
                           alt={`${game.title} - Media`}

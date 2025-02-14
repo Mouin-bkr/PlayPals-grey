@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
-import Logo from "@/public/images/logo-02.png";
+import Logo from "@/public/images/logo.jpeg";
 
 export default function CTA() {
   return (
